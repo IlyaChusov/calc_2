@@ -1,13 +1,18 @@
 Option Explicit
 
-Sub Добавить_Бренд()
+Sub Ж’РѕР±Р°РІРёС‚СЊ_Р…СЂРµРЅРґ()
         
+    Dim macrosBoosted As Boolean
+    Dim errMsg As String
+        
+    On Error GoTo ErrorHandler
     Calculate.speedUpMacros True
+    macrosBoosted = True
     
-    'Лист, с которого будут копироваться новые блоки
+    'Р‹РёСЃС‚, СЃ РєРѕС‚РѕСЂРѕРіРѕ Р±СѓРґСѓС‚ РєРѕРїРёСЂРѕРІР°С‚СЊСЃв‚¬ РЅРѕРІС‹Рµ Р±Р»РѕРєРё
     Dim sheetCopy As Worksheet
     Set sheetCopy = ActiveWorkbook.Sheets("Copy")
-    Dim rightCell As Range, temp As Range, sheet As Worksheet, brandNum As Integer
+    Dim rightCell As Range, temp As Range, sheet As Worksheet, brandNum As Long
     Set sheet = ActiveSheet
     Set rightCell = sheet.Cells(3, 8)
     For Each temp In FindMergedCells(sheet.Range(rightCell, rightCell.Offset(50, 7)))
@@ -16,12 +21,12 @@ Sub Добавить_Бренд()
     Set temp = sheet.Cells(3, 8)
     
     If temp.Interior.Color = -4142 Or temp.Interior.Color = 16777215 Then
-        'Брендов нет
+        'Р…СЂРµРЅРґРѕРІ РЅРµС‚
         sheetCopy.Range("A2:G52").Copy temp
         brandNum = 1
         Set rightCell = sheet.Cells(3, 8)
     Else
-        'Бренды есть
+        'Р…СЂРµРЅРґС‹ РµСЃС‚СЊ
         Set temp = sheet.Cells(3, 5)
         Do While temp.Interior.Color = 14083324
         Set temp = temp.Offset(0, 1)
@@ -43,9 +48,9 @@ Sub Добавить_Бренд()
             .HorizontalAlignment = xlCenter
             .Font.Bold = True
         End With
-        rightCell.Offset(2, 1) = "'+ Бренд"
-        rightCell.Offset(3, 1) = "'+ ЦА"
-        rightCell.Offset(4, 1) = "'+ Регион"
+        rightCell.Offset(2, 1) = "'+ Р…СЂРµРЅРґ"
+        rightCell.Offset(3, 1) = "'+ Г·С"
+        rightCell.Offset(4, 1) = "'+ вЂ“РµРіРёРѕРЅ"
         With sheet.Range(rightCell.Offset(2, 1), rightCell.Offset(4, 1))
             .Font.Bold = True
             .HorizontalAlignment = xlLeft
@@ -69,7 +74,7 @@ Sub Добавить_Бренд()
     End If
     
     
-    'Кнопка с добавлением нового региона
+    'В РЅРѕРїРєР° СЃ РґРѕР±Р°РІР»РµРЅРёРµРј РЅРѕРІРѕРіРѕ СЂРµРіРёРѕРЅР°
     Dim VBProj As Object, VBComp As Object, CodeMod As Object, LineNum As Long
     Set VBProj = ThisWorkbook.VBProject
     Set VBComp = VBProj.VBComponents("Add_Brand")
@@ -96,7 +101,7 @@ Sub Добавить_Бренд()
             "   Set VBProj = ThisWorkbook.VBProject" & vbCrLf & _
             "   Set VBComp = VBProj.VBComponents(""Add_Brand"")" & vbCrLf & _
             "   Set CodeMod = VBComp.CodeModule" & vbCrLf & _
-            "   Dim intLinesNr As Integer" & vbCrLf & _
+            "   Dim intLinesNr As Long" & vbCrLf & _
             "   intLinesNr = CodeMod.CountOfLines" & vbCrLf
     sCode = sCode & "" & _
             "   ActiveSheet.Shapes(""Add_Region_Button" & addMacroNum & """).Delete" & vbCrLf & _
@@ -124,7 +129,7 @@ Sub Добавить_Бренд()
     With addRegionBut
         .Name = "Add_Region_Button" & addMacroNum
         .OnAction = "Add_Region" & addMacroNum
-        .Caption = "Добавить регион"
+        .Caption = "Ж’РѕР±Р°РІРёС‚СЊ СЂРµРіРёРѕРЅ"
     End With
     
     Dim deleteRegionBut As Button
@@ -133,16 +138,23 @@ Sub Добавить_Бренд()
     With deleteRegionBut
         .Name = "Delete_Brand_Button" & addMacroNum
         .OnAction = "Delete_Brand" & addMacroNum
-        .Caption = "Удалить бренд"
+        .Caption = "вЂќРґР°Р»РёС‚СЊ Р±СЂРµРЅРґ"
     End With
         
-    Calculate.speedUpMacros False
+CleanExit:
+    If macrosBoosted Then Calculate.speedUpMacros False
+    If Len(errMsg) > 0 Then MsgBox errMsg, vbCritical, "СњС€РёР±РєР° РїСЂРё РґРѕР±Р°РІР»РµРЅРёРё Р±СЂРµРЅРґР°"
+    Exit Sub
+    
+ErrorHandler:
+    errMsg = Err.Description & vbNewLine & vbNewLine & "Line: " & CStr(Erl)
+    Resume CleanExit
 End Sub
 
-'Создает список с регионами в ячейке
+'вЂ”РѕР·РґР°РµС‚ СЃРїРёСЃРѕРє СЃ СЂРµРіРёРѕРЅР°РјРё РІ в‚¬С‡РµР№РєРµ
 Sub CreateRegionArea(cell As Range)
     Dim sheet As Worksheet, temp As Range
-    Set sheet = ActiveWorkbook.Sheets("тех")
+    Set sheet = ActiveWorkbook.Sheets("С‚РµС…")
     Set temp = sheet.Range("AJ2")
     Do While temp.Value <> ""
         Set temp = temp.Offset(1, 0)
@@ -152,16 +164,16 @@ Sub CreateRegionArea(cell As Range)
         .Merge
         .Interior.ColorIndex = 2
         .Borders.Weight = 2
-        .Value = "Регионы"
+        .Value = "вЂ“РµРіРёРѕРЅС‹"
         .HorizontalAlignment = xlCenter
         With .Validation
             .Delete
-            .Add xlValidateList, xlValidAlertStop, , "='тех'!$AJ$1:" & temp.Address
+            .Add xlValidateList, xlValidAlertStop, , "='С‚РµС…'!$AJ$1:" & temp.Address
         End With
     End With
 End Sub
 
-'Проверка на наличие выпадающего списка по ячейке
+'С•СЂРѕРІРµСЂРєР° РЅР° РЅР°Р»РёС‡РёРµ РІС‹РїР°РґР°СЋС‰РµРіРѕ СЃРїРёСЃРєР° РїРѕ в‚¬С‡РµР№РєРµ
 Function HasValidation(cell As Range) As Boolean
     Dim t: t = Null
 
@@ -173,9 +185,16 @@ Function HasValidation(cell As Range) As Boolean
 End Function
 
 Function FindMergedCells(rng As Range) As Collection
-    Dim temp As Range, col As New Collection
+    Dim temp As Range, col As New Collection, seen As Object, areaAddress As String
+    Set seen = CreateObject("Scripting.Dictionary")
     For Each temp In rng
-        If temp.MergeCells Then col.Add temp.MergeArea
+        If temp.MergeCells Then
+            areaAddress = temp.MergeArea.Address
+            If Not seen.Exists(areaAddress) Then
+                seen.Add areaAddress, True
+                col.Add temp.MergeArea
+            End If
+        End If
     Next temp
     Set FindMergedCells = col
 End Function
@@ -199,15 +218,15 @@ Sub Delete_Brand1()
    Set VBProj = ThisWorkbook.VBProject
    Set VBComp = VBProj.VBComponents("Add_Brand")
    Set CodeMod = VBComp.CodeModule
-   Dim intLinesNr As Integer
+    Dim intLinesNr As Long
    intLinesNr = CodeMod.CountOfLines
    ''''''''''
    Dim sheetFlow As Worksheet, sheetBrief As Worksheet, sheetSdelka As Worksheet
    Set sheetFlow = ActiveWorkbook.Sheets("FLOW")
-   Set sheetBrief = ActiveWorkbook.Sheets("Бриф")
-   Set sheetSdelka = ActiveWorkbook.Sheets("СДЕЛКА")
+   Set sheetBrief = ActiveWorkbook.Sheets("Р…СЂРёС„")
+   Set sheetSdelka = ActiveWorkbook.Sheets("вЂ”Ж’в‰€Р‹В С")
    
-   Dim rightCell As Range, rightCellBase As Range, temp As Range, leftTopCell As Range, rightCol As Integer, rightColForFlow As Integer, tempStr As String, bottomRow As Integer
+    Dim rightCell As Range, rightCellBase As Range, temp As Range, leftTopCell As Range, rightCol As Long, rightColForFlow As Long, tempStr As String, bottomRow As Long
     Set rightCell = sheetBrief.Cells(3, 8)
     Set rightCellBase = rightCell
    rightColForFlow = sheetFlow.UsedRange.Find("TOTAL").Column
@@ -238,7 +257,7 @@ Sub Delete_Brand1()
   
   
   
-        'СДЕЛКА
+        'вЂ”Ж’в‰€Р‹В С
         For Each temp In sheetSdelka.UsedRange
             If InStr(temp.Formula, tempStr) <> 0 Then
                  Set leftTopCell = temp
@@ -296,7 +315,7 @@ Sub Delete_Brand2()
    Set VBProj = ThisWorkbook.VBProject
    Set VBComp = VBProj.VBComponents("Add_Brand")
    Set CodeMod = VBComp.CodeModule
-   Dim intLinesNr As Integer
+    Dim intLinesNr As Long
    intLinesNr = CodeMod.CountOfLines
    ActiveSheet.Shapes("Add_Region_Button2").Delete
    ActiveSheet.Shapes("Delete_Brand_Button2").Delete

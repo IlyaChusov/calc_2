@@ -1,28 +1,29 @@
 Option Explicit
 
-Sub Рассчитать()
+Sub вЂ“Р°СЃСЃС‡РёС‚Р°С‚СЊ()
     
-    speedUpMacros True
+    Dim errMsg As String
+    Dim macrosBoosted As Boolean
     
     On Error GoTo ErrorExit
+    speedUpMacros True
+    macrosBoosted = True
     '''''''''''''''
-    Dim sheetBrief As Worksheet, allBrands As New Collection, temp As Range, temp2 As Range, tmpStr As String, tempStr As String, plusBrandCell As Range, i As Integer
-    Set sheetBrief = ActiveWorkbook.Sheets("Бриф")
-    'Set temp = sheetBrief.UsedRange.Find("+ Бренд")
-    If temp Is Nothing Then Call Err.Raise(10, , "Не найдены бренды для добавления на листе Бриф")
+    Dim sheetBrief As Worksheet, allBrands As New Collection, temp As Range, temp2 As Range, tmpStr As String, tempStr As String, plusBrandCell As Range, i As Long
+    Set sheetBrief = ActiveWorkbook.Sheets("Р…СЂРёС„")
+    Set temp = sheetBrief.UsedRange.Find("+ Р…СЂРµРЅРґ", LookIn:=xlValues, LookAt:=xlWhole)
+    If temp Is Nothing Then Call Err.Raise(10, , "РЊРµ РЅР°Р№РґРµРЅС‹ Р±СЂРµРЅРґС‹ РґР»в‚¬ РґРѕР±Р°РІР»РµРЅРёв‚¬ РЅР° Р»РёСЃС‚Рµ Р…СЂРёС„")
     tmpStr = temp.Address
-    allBrands.Add temp
-    Set temp = sheetBrief.UsedRange.FindNext
-    Do While True
-        Set temp = sheetBrief.UsedRange.FindNext(temp)
-        If temp.Address = tmpStr Then Exit Do
+    Do
         allBrands.Add temp
-    Loop
+        Set temp = sheetBrief.UsedRange.FindNext(temp)
+        If temp Is Nothing Then Exit Do
+    Loop While temp.Address <> tmpStr
     
     Dim startCellBook As Range, caBook As Object, brandBookName As String
     Set caBook = CreateObject("Scripting.Dictionary")
     Set startCellBook = sheetBrief.Cells(9, 5)
-    If startCellBook.Value <> "Бренд" Then Call Err.Raise(10, , "Не найдена область со справочником ЦА-Бренд")
+    If startCellBook.Value <> "Р…СЂРµРЅРґ" Then Call Err.Raise(10, , "РЊРµ РЅР°Р№РґРµРЅР° РѕР±Р»Р°СЃС‚СЊ СЃРѕ СЃРїСЂР°РІРѕС‡РЅРёРєРѕРј Г·С-Р…СЂРµРЅРґ")
     Set startCellBook = startCellBook.Offset(1, 0)
     For i = 0 To 12
         brandBookName = Trim(startCellBook.Value)
@@ -34,15 +35,15 @@ Sub Рассчитать()
     
     '''''''''''''''
     Dim sheetTech As Worksheet, regionCellTech As Range
-    Set sheetTech = ActiveWorkbook.Sheets("тех")
-    Set regionCellTech = sheetTech.UsedRange.Find("Регион")
-    If regionCellTech Is Nothing Then Call Err.Raise(10, , "Не найдена стартовая ячейка с регионами на листе тех")
+    Set sheetTech = ActiveWorkbook.Sheets("С‚РµС…")
+    Set regionCellTech = sheetTech.UsedRange.Find("вЂ“РµРіРёРѕРЅ")
+    If regionCellTech Is Nothing Then Call Err.Raise(10, , "РЊРµ РЅР°Р№РґРµРЅР° СЃС‚Р°СЂС‚РѕРІР°в‚¬ в‚¬С‡РµР№РєР° СЃ СЂРµРіРёРѕРЅР°РјРё РЅР° Р»РёСЃС‚Рµ С‚РµС…")
     
     '''''''''''''''
     Dim sheetAff As Worksheet, startCellAff As Range
     Set sheetAff = ActiveWorkbook.Sheets("Aff")
-    Set startCellAff = sheetAff.UsedRange.Find("город")
-    If startCellAff Is Nothing Then Call Err.Raise(10, , "Не найдена стартовая ячейка с городом на листе Aff")
+    Set startCellAff = sheetAff.UsedRange.Find("РіРѕСЂРѕРґ")
+    If startCellAff Is Nothing Then Call Err.Raise(10, , "РЊРµ РЅР°Р№РґРµРЅР° СЃС‚Р°СЂС‚РѕРІР°в‚¬ в‚¬С‡РµР№РєР° СЃ РіРѕСЂРѕРґРѕРј РЅР° Р»РёСЃС‚Рµ Aff")
     Set startCellAff = startCellAff.Offset(1, 0)
     Do While startCellAff <> ""
         Set startCellAff = startCellAff.Offset(1, 0)
@@ -51,28 +52,26 @@ Sub Рассчитать()
     '''''''''''''''
     Dim sheetReach As Worksheet, startCellReach As Range
     Set sheetReach = ActiveWorkbook.Sheets("Reach")
-    Set startCellReach = sheetReach.UsedRange.Find("город")
-    If startCellReach Is Nothing Then Call Err.Raise(10, , "Не найдена стартовая ячейка с городом на листе Reach")
+    Set startCellReach = sheetReach.UsedRange.Find("РіРѕСЂРѕРґ")
+    If startCellReach Is Nothing Then Call Err.Raise(10, , "РЊРµ РЅР°Р№РґРµРЅР° СЃС‚Р°СЂС‚РѕРІР°в‚¬ в‚¬С‡РµР№РєР° СЃ РіРѕСЂРѕРґРѕРј РЅР° Р»РёСЃС‚Рµ Reach")
     Set startCellReach = startCellReach.Offset(1, 0)
     Do While startCellReach <> ""
         Set startCellReach = startCellReach.Offset(1, 0)
     Loop
     
     '''''''''''''''
-    Dim sheetMP As Worksheet, startCellMP As Range, lastCellMP As Range, totalTVRColMP As Integer, canalKoefColMP As Integer, clientKoefColMP As Integer, priceBaseColMP As Integer, avTVRColMP As Integer, affColMP As Integer, splitColMP As Integer
-    Set sheetMP = ActiveWorkbook.Sheets("МП")
-    Set startCellMP = sheetMP.UsedRange.Find("Город")
-    totalTVRColMP = sheetMP.UsedRange.Find("total TVR ЦА").Column
-    Set temp = sheetMP.UsedRange.Find("Split")
-    If temp Is Nothing Then Call Err.Raise(10, , "Не найдена колонка Split на листе МП")
-    splitColMP = temp.Column
-    Set temp = sheetMP.UsedRange.Find("Бонус закладываем").Offset(0, -1)
+    Dim sheetMP As Worksheet, startCellMP As Range, lastCellMP As Range, totalTVRColMP As Long, canalKoefColMP As Long, clientKoefColMP As Long, priceBaseColMP As Long, avTVRColMP As Long, affColMP As Long, splitColMP As Long
+    Set sheetMP = ActiveWorkbook.Sheets("С›С•")
+    Set startCellMP = sheetMP.UsedRange.Find("в€љРѕСЂРѕРґ")
+    totalTVRColMP = FindRequiredCell(sheetMP.UsedRange, "total TVR Г·С", xlWhole).Column
+    splitColMP = FindRequiredCell(sheetMP.UsedRange, "Split", xlWhole).Column
+    Set temp = FindRequiredCell(sheetMP.UsedRange, "Р…РѕРЅСѓСЃ Р·Р°РєР»Р°РґС‹РІР°РµРј").Offset(0, -1)
     canalKoefColMP = temp.Column
     clientKoefColMP = temp.Offset(0, -1).Column
-    priceBaseColMP = sheetMP.UsedRange.Find("Цена базовая", lookat:=xlPart).Column
-    avTVRColMP = sheetMP.UsedRange.Find("av TVR БА").Column
-    affColMP = sheetMP.UsedRange.Find("Aff").Column
-    If startCellMP Is Nothing Then Call Err.Raise(10, , "Не найдена стартовая ячейка на листе МП")
+    priceBaseColMP = FindRequiredCell(sheetMP.UsedRange, "Г·РµРЅР° Р±Р°Р·РѕРІР°в‚¬", xlPart).Column
+    avTVRColMP = FindRequiredCell(sheetMP.UsedRange, "av TVR Р…С", xlWhole).Column
+    affColMP = FindRequiredCell(sheetMP.UsedRange, "Aff", xlWhole).Column
+    If startCellMP Is Nothing Then Call Err.Raise(10, , "РЊРµ РЅР°Р№РґРµРЅР° СЃС‚Р°СЂС‚РѕРІР°в‚¬ в‚¬С‡РµР№РєР° РЅР° Р»РёСЃС‚Рµ С›С•")
     Set startCellMP = startCellMP.Offset(2, 0)
     Set lastCellMP = startCellMP
     Do While lastCellMP <> ""
@@ -81,29 +80,27 @@ Sub Рассчитать()
     Set lastCellMP = lastCellMP.Offset(-1, 0)
     
     '''''''''''''''
-    Dim sheetFlow As Worksheet, startRowFlow As Integer, tcppCell As Range, tcppFirstAdr As String, tcppPrevCol As Integer
+    Dim sheetFlow As Worksheet, startRowFlow As Long, tcppCell As Range, tcppFirstAdr As String, tcppPrevCol As Long
     Set sheetFlow = ActiveWorkbook.Sheets("FLOW")
-    i = 0
-    For Each temp In sheetFlow.Range("D:D")
-        If i > 2000 Then Exit For
-        If temp = "Budget total" Then
+    For Each temp In sheetFlow.Range("D1:D2000")
+        If temp.Value = "Budget total" Then
             startRowFlow = temp.Row + 1
             Exit For
         End If
-        i = i + 1
     Next temp
+    If startRowFlow = 0 Then Call Err.Raise(10, , "РЊРµ РЅР°Р№РґРµРЅ Р·Р°РіРѕР»РѕРІРѕРє Budget total РЅР° Р»РёСЃС‚Рµ FLOW")
     
     '''''''''''''''
-    Dim sheetSdelka As Worksheet, startCellSdelka As Range, lastCellSdelka As Range, newLastCellSdelka As Range, ccColSdelka As Integer, trpNacColSdelka As Integer, splitCaColSdelka As Integer, chronColSdelka As Integer, chronCoefColSdelka As Integer, affColSdelka As Integer
-    Set sheetSdelka = ActiveWorkbook.Sheets("СДЕЛКА")
-    Set startCellSdelka = sheetSdelka.UsedRange.Find("Город")
-    ccColSdelka = sheetSdelka.UsedRange.Find("Grp20 с наценкой на хрон").Offset(0, 1).Column
-    trpNacColSdelka = sheetSdelka.UsedRange.Find("Trp с наценкой на хрон").Column
-    splitCaColSdelka = sheetSdelka.UsedRange.Find("Сплит ЦА").Column
-    chronColSdelka = sheetSdelka.UsedRange.Find("Хрон", lookat:=xlWhole).Column
-    chronCoefColSdelka = sheetSdelka.UsedRange.Find("Коэф. на хрон", lookat:=xlWhole).Column
-    affColSdelka = sheetSdelka.UsedRange.Find("Aff").Column
-    If startCellSdelka Is Nothing Then Call Err.Raise(10, , "Не найдена стартовая ячейка на листе СДЕЛКА")
+    Dim sheetSdelka As Worksheet, startCellSdelka As Range, lastCellSdelka As Range, newLastCellSdelka As Range, ccColSdelka As Long, trpNacColSdelka As Long, splitCaColSdelka As Long, chronColSdelka As Long, chronCoefColSdelka As Long, affColSdelka As Long
+    Set sheetSdelka = ActiveWorkbook.Sheets("вЂ”Ж’в‰€Р‹В С")
+    Set startCellSdelka = sheetSdelka.UsedRange.Find("в€љРѕСЂРѕРґ")
+    ccColSdelka = FindRequiredCell(sheetSdelka.UsedRange, "Grp20 СЃ РЅР°С†РµРЅРєРѕР№ РЅР° С…СЂРѕРЅ", xlWhole).Offset(0, 1).Column
+    trpNacColSdelka = FindRequiredCell(sheetSdelka.UsedRange, "Trp СЃ РЅР°С†РµРЅРєРѕР№ РЅР° С…СЂРѕРЅ", xlWhole).Column
+    splitCaColSdelka = FindRequiredCell(sheetSdelka.UsedRange, "вЂ”РїР»РёС‚ Г·С", xlWhole).Column
+    chronColSdelka = FindRequiredCell(sheetSdelka.UsedRange, "вЂ™СЂРѕРЅ", xlWhole).Column
+    chronCoefColSdelka = FindRequiredCell(sheetSdelka.UsedRange, "В РѕСЌС„. РЅР° С…СЂРѕРЅ", xlWhole).Column
+    affColSdelka = FindRequiredCell(sheetSdelka.UsedRange, "Aff", xlWhole).Column
+    If startCellSdelka Is Nothing Then Call Err.Raise(10, , "РЊРµ РЅР°Р№РґРµРЅР° СЃС‚Р°СЂС‚РѕРІР°в‚¬ в‚¬С‡РµР№РєР° РЅР° Р»РёСЃС‚Рµ вЂ”Ж’в‰€Р‹В С")
     Set startCellSdelka = startCellSdelka.Offset(2, 0)
     Set lastCellSdelka = startCellSdelka
     Do While lastCellSdelka <> ""
@@ -111,7 +108,7 @@ Sub Рассчитать()
     Loop
     Set lastCellSdelka = lastCellSdelka.Offset(-1, 0)
     
-    'Лист, с которого будут копироваться новые блоки
+    'Р‹РёСЃС‚, СЃ РєРѕС‚РѕСЂРѕРіРѕ Р±СѓРґСѓС‚ РєРѕРїРёСЂРѕРІР°С‚СЊСЃв‚¬ РЅРѕРІС‹Рµ Р±Р»РѕРєРё
     Dim sheetCopy As Worksheet
     Set sheetCopy = ActiveWorkbook.Sheets("Copy")
     
@@ -120,7 +117,7 @@ Sub Рассчитать()
     
     
     Dim brandName As String, caName As String, caNum As String, regions_ As Range, regions As Collection, regionName As Variant, caAndBrand As String
-    Dim regionTargetTech As Range, regionTargetLastTech As Range, regionRowsTech As Integer
+    Dim regionTargetTech As Range, regionTargetLastTech As Range, regionRowsTech As Long
     Dim newLastCellMP As Range, oldLastCellMP As Range, arr As Variant
 '    Dim allBrandsOnFlow
 '    Set allBrandsOnFlow = CreateObject("Scripting.Dictionary")
@@ -138,15 +135,15 @@ Sub Рассчитать()
 '    Next temp
     
     
-    'Ячейка по столбцу av TVR ЦА, с которой ошибки. Поэтому ее для второго и далее регионов копирую с первого, а записываю в эту переменную
-    'TODO: подумать над коллекцией всех ячеек с ошибкой вместо отдельной переменной для каждой
+    'СЏС‡РµР№РєР° РїРѕ СЃС‚РѕР»Р±С†Сѓ av TVR Г·С, СЃ РєРѕС‚РѕСЂРѕР№ РѕС€РёР±РєРё. С•РѕСЌС‚РѕРјСѓ РµРµ РґР»в‚¬ РІС‚РѕСЂРѕРіРѕ Рё РґР°Р»РµРµ СЂРµРіРёРѕРЅРѕРІ РєРѕРїРёСЂСѓСЋ СЃ РїРµСЂРІРѕРіРѕ, Р° Р·Р°РїРёСЃС‹РІР°СЋ РІ СЌС‚Сѓ РїРµСЂРµРјРµРЅРЅСѓСЋ
+    'TODO: РїРѕРґСѓРјР°С‚СЊ РЅР°Рґ РєРѕР»Р»РµРєС†РёРµР№ РІСЃРµС… в‚¬С‡РµРµРє СЃ РѕС€РёР±РєРѕР№ РІРјРµСЃС‚Рѕ РѕС‚РґРµР»СЊРЅРѕР№ РїРµСЂРµРјРµРЅРЅРѕР№ РґР»в‚¬ РєР°Р¶РґРѕР№
     Dim savedCellReach As Range, savedCellavTVRCA As Range, savedCellTotalTVR As Range, savedCellCanalCoef As Range, savedCellClientCoef As Range, savedCellPriceBase As Range, savedCellavTVRBA As Range, savedCellAff As Range
     Dim savedCellChronSdelka As Range, savedCellChronCoefSdelka As Range, savedCellTrpSumSdelka As Range
     Dim cellsWithErrorCollection As Collection
-    Dim check, caCell As Range, brandCell As Range, regionCell As Range, caNumAdr As String, regionAdr As String, chronsNot As New Collection, j As Integer, rowChronFlowNum As Integer, t As Variant
-    For Each check In sheetBrief.CheckBoxes
-        If check.Value = -4146 Then chronsNot.Add check.Caption
-    Next check
+    Dim cb As CheckBox, caCell As Range, brandCell As Range, regionCell As Range, caNumAdr As String, regionAdr As String, chronsNot As New Collection, j As Long, rowChronFlowNum As Long, t As Variant, chronoFilter As Variant
+    For Each cb In sheetBrief.CheckBoxes
+        If cb.Value = -4146 Then chronsNot.Add cb.Caption
+    Next cb
     For Each plusBrandCell In allBrands
         Set brandCell = plusBrandCell.Offset(0, 2)
         brandName = brandCell.Value
@@ -177,8 +174,8 @@ Sub Рассчитать()
             
             
             
-            'ЛИСТ ФЛОУ
-            If Trim(regionName) = "Регионы" Then regionName = ""
+            'Р‹В»вЂ”вЂњ вЂР‹СњвЂќ
+            If Trim(regionName) = "вЂ“РµРіРёРѕРЅС‹" Then regionName = ""
             For i = 0 To 20
                 sheetFlow.Rows(startRowFlow - 1).EntireRow.Insert
             Next i
@@ -188,27 +185,26 @@ Sub Рассчитать()
             sheetFlow.Cells(startRowFlow + 1, 2).Formula = caNumAdr
             sheetFlow.Cells(startRowFlow + 1, 3).Formula = caAndBrand
             sheetFlow.Cells(startRowFlow + 1, 1).Formula = regionAdr
-            'Удаление неотмеченных строк Хрона на листе Флоу
+            'вЂќРґР°Р»РµРЅРёРµ РЅРµРѕС‚РјРµС‡РµРЅРЅС‹С… СЃС‚СЂРѕРє вЂ™СЂРѕРЅР° РЅР° Р»РёСЃС‚Рµ вЂР»РѕСѓ
             j = 0
-            For Each check In chronsNot
-                If check = "25" Then
-                    rowChronFlowNum = 11
-                ElseIf check = "20" Then
-                    rowChronFlowNum = 12
-                ElseIf check = "15" Then
-                    rowChronFlowNum = 13
-                ElseIf check = "10" Then
-                    rowChronFlowNum = 14
-                ElseIf check = "5" Then
-                    rowChronFlowNum = 15
+            For Each chronoFilter In chronsNot
+                rowChronFlowNum = 0
+                Select Case CStr(chronoFilter)
+                    Case "25": rowChronFlowNum = 11
+                    Case "20": rowChronFlowNum = 12
+                    Case "15": rowChronFlowNum = 13
+                    Case "10": rowChronFlowNum = 14
+                    Case "5": rowChronFlowNum = 15
+                End Select
+                If rowChronFlowNum > 0 Then
+                    sheetFlow.Cells(startRowFlow + rowChronFlowNum - j, 4).EntireRow.Delete
+                    j = j + 1
                 End If
-                sheetFlow.Cells(startRowFlow + rowChronFlowNum - j, 4).EntireRow.Delete
-                j = j + 1
-            Next check
+            Next chronoFilter
             startRowFlow = startRowFlow + 21 - j
             
             Set regionTargetTech = regionCellTech.EntireColumn.Find(regionName)
-            If regionTargetTech Is Nothing Then Call Err.Raise(10, , "Не найден нужный регион на листе тех")
+            If regionTargetTech Is Nothing Then Call Err.Raise(10, , "РЊРµ РЅР°Р№РґРµРЅ РЅСѓР¶РЅС‹Р№ СЂРµРіРёРѕРЅ РЅР° Р»РёСЃС‚Рµ С‚РµС…")
             Set regionTargetLastTech = regionTargetTech
             Do While regionTargetLastTech.Value = regionName
                 Set regionTargetLastTech = regionTargetLastTech.Offset(1, 0)
@@ -220,7 +216,7 @@ Sub Рассчитать()
             
             
             
-            'ЛИСТ МП (и немного Сделка)
+            'Р‹В»вЂ”вЂњ С›С• (Рё РЅРµРјРЅРѕРіРѕ вЂ”РґРµР»РєР°)
             For i = 0 To regionRowsTech - 1
                 sheetCopy.Rows(96).EntireRow.Copy sheetMP.Cells(lastCellMP.Row + 1 + i, 1)
                 sheetCopy.Rows(86).EntireRow.Copy sheetSdelka.Cells(lastCellSdelka.Row + 1 + i, 1)
@@ -262,7 +258,7 @@ Sub Рассчитать()
                 .AutoFill sheetMP.Range(sheetMP.Cells(lastCellMP.Row + 1, splitColMP), sheetMP.Cells(newLastCellMP.Row - 1, splitColMP))
             End With
             
-            'Правка формул колонки Reach
+            'С•СЂР°РІРєР° С„РѕСЂРјСѓР» РєРѕР»РѕРЅРєРё Reach
             Set temp = sheetMP.Cells(lastCellMP.Row + 1, 9)
             If savedCellReach Is Nothing Then
                 Set cellsWithErrorCollection = New Collection
@@ -299,7 +295,7 @@ Sub Рассчитать()
             End If
             temp.AutoFill sheetMP.Range(temp, newLastCellMP.Offset(-1, 8))
             
-            'Правка формул колонки av TVR ЦА
+            'С•СЂР°РІРєР° С„РѕСЂРјСѓР» РєРѕР»РѕРЅРєРё av TVR Г·С
             With sheetMP.Cells(lastCellMP.Row + 1, 10)
                 Set cellsWithErrorCollection = New Collection
                 cellsWithErrorCollection.Add sheetMP.Cells(.Row, 5).Address(False)
@@ -308,7 +304,7 @@ Sub Рассчитать()
             End With
             Call correctBrokeFormula(sheetMP, sheetMP.Cells(lastCellMP.Row + 1, 10), savedCellavTVRCA, sheetMP.Range(sheetMP.Cells(lastCellMP.Row + 1, 10), newLastCellMP.Offset(-1, 9)), cellsWithErrorCollection)
             
-            'Правка формул колонки total TVR ЦА
+            'С•СЂР°РІРєР° С„РѕСЂРјСѓР» РєРѕР»РѕРЅРєРё total TVR Г·С
             With sheetMP.Cells(lastCellMP.Row + 1, totalTVRColMP)
                 Set cellsWithErrorCollection = New Collection
                 cellsWithErrorCollection.Add sheetMP.Cells(.Row, 18).Address(False)
@@ -318,7 +314,7 @@ Sub Рассчитать()
             End With
             Call correctBrokeFormula(sheetMP, sheetMP.Cells(lastCellMP.Row + 1, totalTVRColMP), savedCellTotalTVR, sheetMP.Range(sheetMP.Cells(lastCellMP.Row + 1, totalTVRColMP), sheetMP.Cells(newLastCellMP.Row - 1, totalTVRColMP)), cellsWithErrorCollection)
             
-            'Правка формул колонки Канал коэфф
+            'С•СЂР°РІРєР° С„РѕСЂРјСѓР» РєРѕР»РѕРЅРєРё В Р°РЅР°Р» РєРѕСЌС„С„
             With sheetMP.Cells(lastCellMP.Row + 1, canalKoefColMP)
                 Set cellsWithErrorCollection = New Collection
                 cellsWithErrorCollection.Add sheetMP.Cells(.Row, 1).Address(False)
@@ -326,7 +322,7 @@ Sub Рассчитать()
             End With
             Call correctBrokeFormula(sheetMP, sheetMP.Cells(lastCellMP.Row + 1, canalKoefColMP), savedCellCanalCoef, sheetMP.Range(sheetMP.Cells(lastCellMP.Row + 1, canalKoefColMP), sheetMP.Cells(newLastCellMP.Row - 1, canalKoefColMP)), cellsWithErrorCollection)
             
-            'Правка формул колонки Клиент коэфф
+            'С•СЂР°РІРєР° С„РѕСЂРјСѓР» РєРѕР»РѕРЅРєРё В Р»РёРµРЅС‚ РєРѕСЌС„С„
             With sheetMP.Cells(lastCellMP.Row + 1, clientKoefColMP)
                 Set cellsWithErrorCollection = New Collection
                 cellsWithErrorCollection.Add sheetMP.Cells(.Row, 1).Address(False)
@@ -334,7 +330,7 @@ Sub Рассчитать()
             End With
             Call correctBrokeFormula(sheetMP, sheetMP.Cells(lastCellMP.Row + 1, clientKoefColMP), savedCellClientCoef, sheetMP.Range(sheetMP.Cells(lastCellMP.Row + 1, clientKoefColMP), sheetMP.Cells(newLastCellMP.Row - 1, clientKoefColMP)), cellsWithErrorCollection)
             
-            'Правка формул колонки Цена базовая *год*
+            'С•СЂР°РІРєР° С„РѕСЂРјСѓР» РєРѕР»РѕРЅРєРё Г·РµРЅР° Р±Р°Р·РѕРІР°в‚¬ *РіРѕРґ*
             With sheetMP.Cells(lastCellMP.Row + 1, priceBaseColMP)
                 Set cellsWithErrorCollection = New Collection
                 cellsWithErrorCollection.Add sheetMP.Cells(.Row, 3).Address(False)
@@ -342,7 +338,7 @@ Sub Рассчитать()
             End With
             Call correctBrokeFormula(sheetMP, sheetMP.Cells(lastCellMP.Row + 1, priceBaseColMP), savedCellPriceBase, sheetMP.Range(sheetMP.Cells(lastCellMP.Row + 1, priceBaseColMP), sheetMP.Cells(newLastCellMP.Row - 1, priceBaseColMP)), cellsWithErrorCollection)
             
-            'Правка формул колонки av TVR БА
+            'С•СЂР°РІРєР° С„РѕСЂРјСѓР» РєРѕР»РѕРЅРєРё av TVR Р…С
             With sheetMP.Cells(lastCellMP.Row + 1, avTVRColMP)
                 Set cellsWithErrorCollection = New Collection
                 cellsWithErrorCollection.Add sheetMP.Cells(.Row, 1).Address(False)
@@ -350,7 +346,7 @@ Sub Рассчитать()
             End With
             Call correctBrokeFormula(sheetMP, sheetMP.Cells(lastCellMP.Row + 1, avTVRColMP), savedCellavTVRBA, sheetMP.Range(sheetMP.Cells(lastCellMP.Row + 1, avTVRColMP), sheetMP.Cells(newLastCellMP.Row - 1, avTVRColMP)), cellsWithErrorCollection)
             
-            'Правка формул колонки Aff
+            'С•СЂР°РІРєР° С„РѕСЂРјСѓР» РєРѕР»РѕРЅРєРё Aff
             With sheetMP.Cells(lastCellMP.Row + 1, affColMP)
                 Set cellsWithErrorCollection = New Collection
                 cellsWithErrorCollection.Add sheetMP.Cells(.Row, 1).Address(False)
@@ -359,8 +355,8 @@ Sub Рассчитать()
             End With
             Call correctBrokeFormula(sheetMP, sheetMP.Cells(lastCellMP.Row + 1, affColMP), savedCellAff, sheetMP.Range(sheetMP.Cells(lastCellMP.Row + 1, affColMP), sheetMP.Cells(newLastCellMP.Row - 1, affColMP)), cellsWithErrorCollection)
             
-            Dim naturalSplitMPCol As Integer
-            naturalSplitMPCol = sheetMP.UsedRange.Find("натуральный Split").Column
+            Dim naturalSplitMPCol As Long
+            naturalSplitMPCol = FindRequiredCell(sheetMP.UsedRange, "РЅР°С‚СѓСЂР°Р»СЊРЅС‹Р№ Split", xlWhole).Column
             For Each temp In sheetMP.Range(sheetMP.Cells(newLastCellMP.Row, 1), sheetMP.Cells(newLastCellMP.Row, naturalSplitMPCol))
                 If InStr(temp.Formula, "=SUM(") <> 0 Then
                     temp.Formula = "=SUM(" & sheetMP.Cells(lastCellMP.Row + 1, temp.Column).Address(False, False) & ":" & sheetMP.Cells(newLastCellMP.Row - 1, temp.Column).Address(False, False) & ")"
@@ -402,7 +398,7 @@ Sub Рассчитать()
             
             
             
-            'ЛИСТ СДЕЛКА
+            'Р‹В»вЂ”вЂњ вЂ”Ж’в‰€Р‹В С
             sheetTech.Range(regionTargetTech, regionTargetLastTech.Offset(0, 3)).Copy (sheetSdelka.Cells(lastCellSdelka.Row + 1, 1))
             Set newLastCellSdelka = sheetSdelka.Cells(lastCellSdelka.Row + regionRowsTech + 1, 1)
             
@@ -425,7 +421,7 @@ Sub Рассчитать()
             sheetSdelka.Cells(lastCellSdelka.Row + 1, 4).Copy
             sheetSdelka.Range(sheetSdelka.Cells(lastCellSdelka.Row + 1, 5), newLastCellSdelka.Offset(-1, 5)).PasteSpecial xlPasteFormats
             
-            Dim itogoSdelkaCol As Integer
+            Dim itogoSdelkaCol As Long
             Set temp = sheetSdelka.Cells(1, sheetSdelka.UsedRange.Columns.Count)
             Do While temp = ""
                 Set temp = temp.Offset(0, -1)
@@ -447,7 +443,7 @@ Sub Рассчитать()
             Next i
             
             i = 1
-            'Правка формул колонок CC-CN
+            'С•СЂР°РІРєР° С„РѕСЂРјСѓР» РєРѕР»РѕРЅРѕРє CC-CN
             For Each temp In sheetSdelka.Range(sheetSdelka.Cells(lastCellSdelka.Row + 1, ccColSdelka), sheetSdelka.Cells(newLastCellSdelka.Row - 1, ccColSdelka + 11))
                 Set cellsWithErrorCollection = New Collection
                 cellsWithErrorCollection.Add sheetSdelka.Cells(temp.Row, 1).Address(False)
@@ -463,14 +459,14 @@ Sub Рассчитать()
                 temp.Formula = tempStr
             Next temp
             
-            'Правка формул колонки Aff
+            'С•СЂР°РІРєР° С„РѕСЂРјСѓР» РєРѕР»РѕРЅРєРё Aff
             With sheetSdelka.Cells(lastCellSdelka.Row + 1, affColSdelka)
                 .Formula = "=" & sheetMP.Name & "!" & sheetMP.Cells(.Row, affColMP).Address(False, False)
                 .AutoFill sheetSdelka.Range(sheetSdelka.Cells(lastCellSdelka.Row + 1, affColSdelka), sheetSdelka.Cells(newLastCellSdelka.Row - 1, affColSdelka))
             End With
                         
             
-            'Правка формул колонки сумм Trp с наценкой на хрон
+            'С•СЂР°РІРєР° С„РѕСЂРјСѓР» РєРѕР»РѕРЅРєРё СЃСѓРјРј Trp СЃ РЅР°С†РµРЅРєРѕР№ РЅР° С…СЂРѕРЅ
 '            For Each temp In sheetSdelka.Range(sheetSdelka.Cells(newLastCellSdelka.Row, trpNacColSdelka), sheetSdelka.Cells(newLastCellSdelka.Row, trpNacColSdelka + 11))
 '                temp.Formula = Replace(temp.Formula, "#REF!", sheetSdelka.Cells(temp.Row, 4).Address(False), 1, 1)
 '            Next temp
@@ -481,18 +477,18 @@ Sub Рассчитать()
             End With
             Call correctBrokeFormula(sheetSdelka, sheetSdelka.Cells(newLastCellSdelka.Row, trpNacColSdelka), savedCellTrpSumSdelka, sheetSdelka.Range(sheetSdelka.Cells(newLastCellSdelka.Row, trpNacColSdelka), sheetSdelka.Cells(newLastCellSdelka.Row, trpNacColSdelka + 11)), cellsWithErrorCollection)
             
-            'Правка формул колонки Сплит ЦА
+            'С•СЂР°РІРєР° С„РѕСЂРјСѓР» РєРѕР»РѕРЅРєРё вЂ”РїР»РёС‚ Г·С
             For Each temp In sheetSdelka.Range(sheetSdelka.Cells(lastCellSdelka.Row + 1, splitCaColSdelka), sheetSdelka.Cells(newLastCellSdelka.Row - 1, splitCaColSdelka))
                 temp.Formula = "=" & sheetMP.Name & "!" & sheetMP.Cells(temp.Row, splitColMP).Address(False, True)
                 temp.AutoFill sheetSdelka.Range(sheetSdelka.Cells(temp.Row, splitCaColSdelka), sheetSdelka.Cells(temp.Row, splitCaColSdelka + 11))
             Next temp
             
-            'Правка формул колонки Trp с наценкой на хрон
+            'С•СЂР°РІРєР° С„РѕСЂРјСѓР» РєРѕР»РѕРЅРєРё Trp СЃ РЅР°С†РµРЅРєРѕР№ РЅР° С…СЂРѕРЅ
             For Each temp In sheetSdelka.Range(sheetSdelka.Cells(lastCellSdelka.Row + 1, trpNacColSdelka), sheetSdelka.Cells(newLastCellSdelka.Row - 1, trpNacColSdelka + 11))
                 temp.Formula = "=" & sheetSdelka.Cells(temp.Row, splitCaColSdelka + temp.Column - trpNacColSdelka).Address(True, False) & "*" & sheetSdelka.Cells(newLastCellSdelka.Row, temp.Column).Address(False, False)
             Next temp
 
-            'Правка формул колонки Хрон
+            'С•СЂР°РІРєР° С„РѕСЂРјСѓР» РєРѕР»РѕРЅРєРё вЂ™СЂРѕРЅ
             For Each temp In sheetSdelka.Range(sheetSdelka.Cells(lastCellSdelka.Row + 1, chronColSdelka), sheetSdelka.Cells(lastCellSdelka.Row + 1, chronColSdelka + 11))
                 With temp
                     Set cellsWithErrorCollection = New Collection
@@ -501,7 +497,7 @@ Sub Рассчитать()
                 Call correctBrokeFormula(sheetSdelka, temp, savedCellChronSdelka, sheetSdelka.Range(temp, sheetSdelka.Cells(newLastCellSdelka.Row - 1, temp.Column)), cellsWithErrorCollection)
             Next temp
             
-            'Правка формул колонки Коэф на хрон
+            'С•СЂР°РІРєР° С„РѕСЂРјСѓР» РєРѕР»РѕРЅРєРё В РѕСЌС„ РЅР° С…СЂРѕРЅ
             For Each temp In sheetSdelka.Range(sheetSdelka.Cells(lastCellSdelka.Row + 1, chronCoefColSdelka), sheetSdelka.Cells(lastCellSdelka.Row + 1, chronCoefColSdelka + 11))
                 With temp
                     Set cellsWithErrorCollection = New Collection
@@ -510,7 +506,7 @@ Sub Рассчитать()
                 Call correctBrokeFormula(sheetSdelka, temp, savedCellChronCoefSdelka, sheetSdelka.Range(temp, sheetSdelka.Cells(newLastCellSdelka.Row - 1, temp.Column)), cellsWithErrorCollection)
             Next temp
             
-            'ЦА для колонки H
+            'Г·С РґР»в‚¬ РєРѕР»РѕРЅРєРё H
             For Each temp In sheetSdelka.Range(sheetSdelka.Cells(lastCellSdelka.Row + 1, 8), sheetSdelka.Cells(newLastCellSdelka.Row - 1, 8))
                 temp = caName
             Next temp
@@ -528,7 +524,7 @@ Sub Рассчитать()
         Next regionCell
     Next plusBrandCell
         
-    Set tcppCell = sheetFlow.UsedRange.Find("TCPP")
+    Set tcppCell = FindRequiredCell(sheetFlow.UsedRange, "TCPP", xlWhole)
     tcppFirstAdr = tcppCell.Address
     If tcppPrevCol = 0 Then tcppPrevCol = tcppCell.Column - 1
     Do
@@ -544,19 +540,24 @@ Sub Рассчитать()
                 End If
             End If
         Next temp
-        Set tcppCell = sheetFlow.UsedRange.Find("TCPP", after:=tcppCell)
+        Set tcppCell = sheetFlow.UsedRange.Find(What:="TCPP", After:=tcppCell, LookIn:=xlValues, LookAt:=xlWhole, SearchOrder:=xlByRows, SearchDirection:=xlNext, MatchCase:=False)
+        If tcppCell Is Nothing Then Exit Do
     Loop While tcppCell.Address <> tcppFirstAdr
     
-    
+CleanExit:
+    On Error Resume Next
+    If macrosBoosted Then speedUpMacros False
+    On Error GoTo 0
+    If Len(errMsg) > 0 Then MsgBox errMsg, , "СњС€РёР±РєР°!"
     Exit Sub
     
 ErrorExit:
-    speedUpMacros False
-    MsgBox Err.Description & vbNewLine & vbNewLine & "Line: " & CStr(Erl), , "Ошибка!"
+    errMsg = Err.Description & vbNewLine & vbNewLine & "Line: " & CStr(Erl)
+    Resume CleanExit
 End Sub
 
 Sub correctBrokeFormula(sheet As Worksheet, ByRef cell As Range, ByRef cellToCopy As Range, rangeToFill As Range, coll As Collection)
-    Dim tempStr As String, i As Integer
+    Dim tempStr As String, i As Long
     i = 1
     If cellToCopy Is Nothing Then
         With cell
@@ -597,5 +598,14 @@ Sub speedUpMacros(yes As Boolean)
         temp.EnableFormatConditionsCalculation = Not yes
     Next temp
 End Sub
+
+Private Function FindRequiredCell(searchRange As Range, searchText As String, Optional lookAt As XlLookAt = xlPart, Optional lookIn As XlFindLookIn = xlValues) As Range
+    Dim found As Range
+    Set found = searchRange.Find(What:=searchText, LookIn:=lookIn, LookAt:=lookAt, SearchOrder:=xlByRows, SearchDirection:=xlNext, MatchCase:=False)
+    If found Is Nothing Then
+        Err.Raise vbObjectError + 1024, , "РЊРµ РЅР°Р№РґРµРЅР° в‚¬С‡РµР№РєР° """ & searchText & """ РЅР° Р»РёСЃС‚Рµ " & searchRange.Worksheet.Name
+    End If
+    Set FindRequiredCell = found
+End Function
 
 
